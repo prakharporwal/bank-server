@@ -40,4 +40,3 @@ ALTER TABLE "transactions" ADD FOREIGN KEY ("from_account_id") REFERENCES "accou
 ALTER TABLE "transactions" ADD FOREIGN KEY ("to_account_id") REFERENCES "accounts" ("id");
 
 ALTER TABLE "account_transactions_entries" ADD FOREIGN KEY ("account_id") REFERENCES "accounts" ("id");
-migrate.linux-amd64.tar.gz
