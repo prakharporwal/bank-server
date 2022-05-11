@@ -23,8 +23,6 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 		return
 	}
 
-	//TODO: connect to db
-
 	statement := `INSERT INTO accounts (owner,currency,balance) VALUES ($1,$2,$3)`
 	server.store.Query(statement, account.Owner, account.Currency, 0) // initial balance will be 0
 
