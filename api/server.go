@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/prakharporwal/back-server/db"
+	"github.com/prakharporwal/bank-server/db"
 )
 
 type Server struct {
@@ -14,7 +14,11 @@ func NewServer(store *db.Store) *Server {
 	router := gin.Default()
 	server := &Server{store: store}
 
+	router.GET("/account", server.GetAccount)
+	router.GET("/account/list/:page", server.ListAccount)
 	router.POST("/account", server.CreateAccount)
+
+	router.POST("/transaction", server.UpdateBalance)
 
 	server.router = router
 	return server

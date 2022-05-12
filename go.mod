@@ -1,4 +1,4 @@
-module github.com/prakharporwal/back-server
+module github.com/prakharporwal/bank-server
 
 go 1.17
 
