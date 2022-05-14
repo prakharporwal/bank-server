@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: c1-bank
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: c1-bank
+  template: 
+    metadata:
+      labels:
+        app: c1-bank
+    spec:
+      containers:
+      - name: c1-bank
+        image: grofffer/bank:1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 8080
