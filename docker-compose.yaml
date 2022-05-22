@@ -16,4 +16,4 @@ services:
   # It means that every time the repository is modifying the data inside
   # of `/var/lib/postgresql/data/`, automatically the change will appear in `db-data`.
   # You don't need to create the `db-data` folder. Docker Compose will do it for you.
-      - /home/prakhar/Desktop/db-data:/var/lib/postgresql/data
+      - /home/prakhar/Desktop/db-data:/var/lib/postgresql/test

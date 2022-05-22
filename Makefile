@@ -23,6 +23,7 @@ migratedown:
 dockerimage:
 	# If facing an-error-failed-to-solve-with-frontend-dockerfile-v0
 	# https://stackoverflow.com/a/66695181
-	
-	DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker build . -t bank:1.0
+	# uncomment below line
+	# DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 
+	docker build . -t grofffer/bank:1.1
 

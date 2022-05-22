@@ -32,7 +32,7 @@ func handler() {
 	defer conn.Close()
 	fmt.Printf("\nSuccessfully connected to database!\n")
 
-	store := db.NewStore(conn)
+	store := db.NewSQLStore(conn)
 
 	server := api.NewServer(store)
 
