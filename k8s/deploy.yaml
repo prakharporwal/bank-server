@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: c1-bank
-        image: grofffer/bank:1.0
+        image: grofffer/bank:1.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
