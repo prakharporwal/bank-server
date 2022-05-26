@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/back-server/db"
 )
@@ -25,5 +27,5 @@ func (server *Server) Start(address string) error {
 }
 
 func Stop() {
-
+	fmt.Print("Stoping Server!")
 }
