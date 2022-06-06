@@ -4,8 +4,9 @@ metadata:
   name: c1-bank-svc
 spec:
   selector:
-    app: c1-bank-svc
+    app: c1-bank-api
   type: LoadBalancer
   ports:
-  - port: 8080
+  - protocol: TCP
+    port: 8080
     targetPort: 8080
