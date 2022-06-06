@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bank-control-plane
+  namespace: kube-system
+data:
+  mapUsers: |
+    - userarn: arn:aws:iam::249081411830:user/github-CD-ecs-access
+      username: github-CD-ecs-access
+      groups:
+        - system:masters
+    - userarn: arn:aws:iam::249081411830:user/prakhar
+      username: prakhar
+      groups:
+        - system:masters

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: c1-bank
-        image: grofffer/bank:1.1
+        image: 249081411830.dkr.ecr.us-east-1.amazonaws.com/bank-server:4c54062a63fae514a815fcbb510824deb9d00f5d
         imagePullPolicy: IfNotPresent
         resources:
           limits:
