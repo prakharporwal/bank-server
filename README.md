@@ -20,15 +20,29 @@ Backend Server for a bank Infrastructure (Go and Postgres)
       `docker network create bank-network`
       `docker network connect bank-network postgres12`
 - [x] Create CI using Github Actions on master branch
-- [ ] Deploy the image in minikube locally
+- [x] Deploy the image in minikube locally
+
+- [x] Current Cloud Architecture
+      \
+       ![Table Schema](cloud-design.png)
+
+- [x] Write Unit Tests by using Mock to mock DB.
 
 - [ ] Handle Transactions
 - [ ] Deploy on Kubernetes using AWS EKS
 - [ ] Setup Monitoring Using Prometheus
 - [ ] Read env variables from config file
-- [ ] Write Unit Tests by using Mock to mock DB.
 
-### Things I am learning
+- [ ] Connect to Kubernetes Control Plane Cluster via kubeconfig yaml file
+- [ ] Using [Lens IDE](https://k8slens.dev) for managing the cluster
+- [ ] Writing Validation rules using [Datree](https://datree.io/)
+- [ ] install Prometheus for monitoring
 
-Dockerfile
-Docker Network
+### Things I am learned from this project
+
+- Why we need a docker
+- Why we need Kubernetes
+- Creating a docker image
+- Dockerfile
+- Docker Network
+- Deploying to Kubernetes
