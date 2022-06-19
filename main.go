@@ -6,8 +6,8 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
-	"github.com/prakharporwal/back-server/api"
-	"github.com/prakharporwal/back-server/db"
+	"github.com/prakharporwal/bank-server/api"
+	"github.com/prakharporwal/bank-server/db"
 )
 
 const (

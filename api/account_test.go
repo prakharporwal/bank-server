@@ -14,8 +14,8 @@ func TestAccount_createAccount(t *testing.T) {
 		{
 			name: "Returns Expected User",
 			account: createAccountInput{
-				Owner:    "fake-owner",
-				Currency: "INR",
+				OwnerEmail: "fake-owner",
+				Currency:   "INR",
 			},
 		},
 	}
@@ -24,7 +24,7 @@ func TestAccount_createAccount(t *testing.T) {
 
 		t.Run(test.name, func(t *testing.T) {
 			// TODO: Fix this test
-			assert.Equal(t, test.account.Owner, "fake-owner")
+			assert.Equal(t, test.account.OwnerEmail, "fake-owner")
 		})
 	}
 }

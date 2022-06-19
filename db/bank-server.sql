@@ -1,6 +1,6 @@
 CREATE TABLE "accounts" (
   "id" BIGSERIAL PRIMARY KEY,
-  "owner" varchar NOT NULL,
+  "owner_email" varchar NOT NULL,
   "balance" bigint NOT NULL,
   "currency" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT 'now()'
@@ -21,7 +21,7 @@ CREATE TABLE "account_transactions_entries" (
   "created_at" timestamptz NOT NULL DEFAULT 'now()'
 );
 
-CREATE INDEX ON "accounts" ("owner");
+CREATE INDEX ON "accounts" ("owner_email");
 
 CREATE INDEX ON "transactions" ("from_account_id");
 
