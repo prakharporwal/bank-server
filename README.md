@@ -1,6 +1,8 @@
-# Bank Server
+# Bank Server ![example workflow](https://github.com/prakharporwal/bank-server/actions/workflows/ecs-image-build.yml/badge.svg
 
 Backend Server for a bank Infrastructure (Go and Postgres)
+
+![docker image](https://github.com/github/docs/actions/workflows/ecs-image-build.yml/badge.svg)
 
 ## Things to do
 
