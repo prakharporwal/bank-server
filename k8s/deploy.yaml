@@ -17,8 +17,19 @@ spec:
         image: 249081411830.dkr.ecr.us-east-1.amazonaws.com/bank-server:4c54062a63fae514a815fcbb510824deb9d00f5d
         imagePullPolicy: IfNotPresent
         resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
           limits:
             memory: "128Mi"
             cpu: "250m"
         ports:
-        - containerPort: 8080
+          - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
