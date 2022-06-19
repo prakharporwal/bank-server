@@ -20,10 +20,12 @@ Backend Server for a bank Infrastructure (Go and Postgres)
       `docker network create bank-network`
       `docker network connect bank-network postgres12`
 - [x] Create CI using Github Actions on master branch
-- [ ] Deploy the image in minikube locally
+- [x] Deploy the image in minikube locally
 
-- [ ] Handle Transactions
-- [ ] Deploy on Kubernetes using AWS EKS
+- [x] Handle Transactions
+- [x] Deploy on Kubernetes using AWS EKS
+- [x] Add Datree in CI for misconfig checking
+
 - [ ] Setup Monitoring Using Prometheus
 - [ ] Read env variables from config file
 - [ ] Write Unit Tests by using Mock to mock DB.
