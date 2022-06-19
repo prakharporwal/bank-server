@@ -1,8 +1,8 @@
 on:
   push:
-    branches: [ master ]
+    branches: [ production ]
   pull_request:
-    branches: [ master ]
+    branches: [ production ]
 
 env:
   DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
