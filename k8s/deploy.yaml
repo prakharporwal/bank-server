@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: c1-bank
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: c1-bank
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: c1-bank
-        image: 249081411830.dkr.ecr.us-east-1.amazonaws.com/bank-server:4c54062a63fae514a815fcbb510824deb9d00f5d
+        image: grofffer/bank:1.2
         imagePullPolicy: IfNotPresent
         resources:
           requests:
