@@ -16,7 +16,6 @@ type createAccountInput struct {
 }
 
 func (server *Server) CreateAccount(ctx *gin.Context) {
-
 	var account createAccountInput
 
 	err := ctx.ShouldBindJSON(&account)
@@ -109,32 +108,116 @@ func (server *Server) UpdateBalance(ctx *gin.Context) {
 	if err != nil {
 		log.Println("Error Parsing! Invalid format", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
 	}
 
 	tx := server.store.BeginTx(ctx, &sql.TxOptions{})
 
 	recordStatement := "INSERT INTO transactions(from_account_id,to_account_id,amount) VALUES($1,$2,$3)"
-	tx.ExecContext(ctx, recordStatement, transaction.FromAccountID, transaction.ToAccountID, transaction.Amount)
-
-	senderRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
-	tx.ExecContext(ctx, senderRecordStatement, transaction.FromAccountID, -transaction.Amount)
-
-	receiverRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
-	tx.ExecContext(ctx, receiverRecordStatement, transaction.ToAccountID, transaction.Amount)
-
-	/******* WRAP IN A TRANSACTION ********/
-	deductStatement := "UPDATE accounts SET balance=($1) WHERE id=($2)"
-	tx.ExecContext(ctx, deductStatement, -transaction.Amount, transaction.FromAccountID)
-
-	incrementStatement := "UPDATE accounts SET balance=($1) WHERE id=($2)"
-	tx.ExecContext(ctx, incrementStatement, transaction.Amount, transaction.ToAccountID)
-	/******* WRAP IN A TRANSACTION ********/
-
-	if err = tx.Commit(); err != nil {
-		log.Println(err)
+	_, err = tx.ExecContext(ctx, recordStatement, transaction.FromAccountID, transaction.ToAccountID, transaction.Amount)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		tx.Rollback()
+		log.Println("Failed executing recording transactions !")
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Success!"})
+	senderRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
+	_, err = tx.ExecContext(ctx, senderRecordStatement, transaction.FromAccountID, -transaction.Amount)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		log.Println("Failed executing record statement query for sender!")
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+
+	receiverRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
+	_, err = tx.ExecContext(ctx, receiverRecordStatement, transaction.ToAccountID, transaction.Amount)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		log.Println("Failed executing record statement query for receiver!")
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+
+	// get current balance
+	senderBalanceQuery := "SELECT balance FROM accounts WHERE id=($1)"
+	rows, err := tx.QueryContext(ctx, senderBalanceQuery, transaction.FromAccountID)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		log.Println("Error failed to query sender balance !")
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+	defer rows.Close()
+
+	var senderBalance int
+	for rows.Next() {
+		if err := rows.Scan(&senderBalance); err != nil {
+			// Check for a scan error.
+			// Query rows will be closed with defer.
+			log.Fatal(err)
+		}
+	}
+
+	// if balance less than zero don't allow transaction fail!
+	if senderBalance < transaction.Amount {
+		log.Println("Low Balance transaction declined!")
+		tx.Rollback()
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Low Balance. Transaction Failed!"})
+		return
+	}
+
+	deductStatement := "UPDATE accounts SET balance=($1) WHERE id=($2)"
+	_, err = tx.ExecContext(ctx, deductStatement, senderBalance-transaction.Amount, transaction.FromAccountID)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		log.Println("Failed deduction query!")
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+
+	// get receiver balance and update
+	receiverBalanceQuery := "SELECT balance FROM accounts WHERE id=($1)"
+	rows, err = tx.QueryContext(ctx, receiverBalanceQuery, transaction.ToAccountID)
+	if err != nil {
+		// Incase we find any error in the query execution, rollback the transaction
+		log.Println("Error failed to query receiver balance !")
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+	defer rows.Close()
+
+	var receiverBalance int
+	for rows.Next() {
+		if err := rows.Scan(&receiverBalance); err != nil {
+			// Check for a scan error.
+			// Query rows will be closed with defer.
+			log.Fatal(err)
+		}
+	}
+
+	incrementStatement := "UPDATE accounts SET balance=($1) WHERE id=($2)"
+	_, err = tx.ExecContext(ctx, incrementStatement, receiverBalance+transaction.Amount, transaction.ToAccountID)
+	if err != nil {
+		log.Println("Failed Increment query!")
+		// Incase we find any error in the query execution, rollback the transaction
+		tx.Rollback()
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.Println("transaction commit failed!", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Transaction Successful!"})
 }
