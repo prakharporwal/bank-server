@@ -1,4 +1,4 @@
-# Bank Server ![example workflow](https://github.com/prakharporwal/bank-server/actions/workflows/ecs-image-build.yml/badge.svg
+# Bank Server
 
 Backend Server for a bank Infrastructure (Go and Postgres)
 
