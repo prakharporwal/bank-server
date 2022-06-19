@@ -2,7 +2,7 @@
 
 Backend Server for a bank Infrastructure (Go and Postgres)
 
-![docker image](https://github.com/github/docs/actions/workflows/ecs-image-build.yml/badge.svg)
+![docker image](https://github.com/prakharporwal/bank-server/actions/workflows/ecs-image-build.yml/badge.svg)
 
 ## Things to do
 
