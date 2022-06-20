@@ -8,7 +8,7 @@ type NotificatonService interface {
 }
 
 func ListNotifications() {
-	// create a notific
+	// List all Notification
 }
 
 func CreateNotification() {

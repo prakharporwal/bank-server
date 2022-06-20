@@ -21,8 +21,8 @@ func NewServer(store *db.Store) *Server {
 	router.GET("/account/list/:page", server.ListAccount)
 	router.POST("/account", server.CreateAccount)
 	router.POST("/login", auth.Login)
-
-	router.POST("/transaction", server.UpdateBalance)
+	router.GET("/statement/:account_id/:page", server.GetStatement)
+	router.POST("/transfer", server.TransferMoney)
 
 	server.router = router
 	return server
@@ -33,5 +33,5 @@ func (server *Server) Start(address string) error {
 }
 
 func Stop() {
-	fmt.Print("Stoping Server!")
+	fmt.Print("Stopping Server!")
 }
