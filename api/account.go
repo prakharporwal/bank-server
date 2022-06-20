@@ -2,9 +2,11 @@ package api
 
 import (
 	"database/sql"
+	"github.com/prakharporwal/bank-server/utils"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/model"
@@ -19,6 +21,13 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	var account createAccountInput
 
 	err := ctx.ShouldBindJSON(&account)
+	account.OwnerEmail = strings.ToLower(account.OwnerEmail)
+	if !utils.IsValidEmail(account.OwnerEmail) {
+		klog.Error("Invalid Email Address", account.OwnerEmail)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Invalid Email Address! Enter a valid email address!"})
+		return
+	}
+
 	if err != nil {
 		log.Println("Error Parsing! Invalid format", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
@@ -76,7 +85,8 @@ func (server *Server) ListAccount(ctx *gin.Context) {
 	var accounts []model.Account
 	for result.Next() {
 		var account model.Account
-		if err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt); err != nil {
+		err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt)
+		if err != nil {
 			log.Println("Error Scanning All Results!", err)
 			ctx.JSON(http.StatusAccepted, accounts)
 			return
@@ -99,8 +109,13 @@ type updateBalanceInput struct {
 	Amount        int `json:"amount" binding:"required"`
 }
 
+const (
+	DEBIT  = "DEBIT"
+	CREDIT = "CREDIT"
+)
+
 // TODO : Requires Authentication ADD its
-func (server *Server) UpdateBalance(ctx *gin.Context) {
+func (server *Server) TransferMoney(ctx *gin.Context) {
 
 	var transaction updateBalanceInput
 	err := ctx.ShouldBindJSON(&transaction)
@@ -113,31 +128,33 @@ func (server *Server) UpdateBalance(ctx *gin.Context) {
 
 	tx := server.store.BeginTx(ctx, &sql.TxOptions{})
 
-	recordStatement := "INSERT INTO transactions(from_account_id,to_account_id,amount) VALUES($1,$2,$3)"
-	_, err = tx.ExecContext(ctx, recordStatement, transaction.FromAccountID, transaction.ToAccountID, transaction.Amount)
+	recordStatement := "INSERT INTO transactions(transaction_id, from_account_id,to_account_id,amount) VALUES($1,$2,$3,$4)"
+	txnId := utils.GenerateTimeStampMicro()
+
+	_, err = tx.ExecContext(ctx, recordStatement, txnId, transaction.FromAccountID, transaction.ToAccountID, transaction.Amount)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
 		tx.Rollback()
-		log.Println("Failed executing recording transactions !")
+		klog.Error("Failed executing recording transactions !", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return
 	}
 
-	senderRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
-	_, err = tx.ExecContext(ctx, senderRecordStatement, transaction.FromAccountID, -transaction.Amount)
+	senderRecordStatement := "INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount,type) VALUES($1,$2,$3,$4,$5)"
+	_, err = tx.ExecContext(ctx, senderRecordStatement, txnId, transaction.FromAccountID, transaction.ToAccountID, transaction.Amount, DEBIT)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
-		log.Println("Failed executing record statement query for sender!")
+		klog.Error("Failed executing record statement query for sender!", err)
 		tx.Rollback()
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return
 	}
 
-	receiverRecordStatement := "INSERT INTO account_transactions_entries(account_id, amount) VALUES($1,$2)"
-	_, err = tx.ExecContext(ctx, receiverRecordStatement, transaction.ToAccountID, transaction.Amount)
+	receiverRecordStatement := "INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount, type) VALUES($1,$2,$3,$4,$5)"
+	_, err = tx.ExecContext(ctx, receiverRecordStatement, txnId, transaction.ToAccountID, transaction.FromAccountID, transaction.Amount, CREDIT)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
-		log.Println("Failed executing record statement query for receiver!")
+		klog.Error("Failed executing record statement query for receiver!", err)
 		tx.Rollback()
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return
@@ -148,7 +165,7 @@ func (server *Server) UpdateBalance(ctx *gin.Context) {
 	rows, err := tx.QueryContext(ctx, senderBalanceQuery, transaction.FromAccountID)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
-		log.Println("Error failed to query sender balance !")
+		klog.Error("Error failed to query sender balance !", err)
 		tx.Rollback()
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return
@@ -176,7 +193,7 @@ func (server *Server) UpdateBalance(ctx *gin.Context) {
 	_, err = tx.ExecContext(ctx, deductStatement, senderBalance-transaction.Amount, transaction.FromAccountID)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
-		log.Println("Failed deduction query!")
+		klog.Error("Failed deduction query!", err)
 		tx.Rollback()
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
 		return

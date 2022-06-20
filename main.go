@@ -2,12 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
 	"github.com/prakharporwal/bank-server/db"
+	"github.com/prakharporwal/bank-server/services"
 )
 
 const (
@@ -16,21 +15,24 @@ const (
 	dbDriver  = "postgres"
 )
 
+var klog services.Logger
+
 func main() {
 	// lambda.Start(handler)
 	handler()
 }
 
 func handler() {
-	fmt.Println("Hey I am creating a Bank Payment System! Will be fun to work on !")
+	klog.Info("Hey I am creating a Bank Payment System! Will be fun to work on !", "hhh")
 
 	conn, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
-		log.Fatal("connect to db failed !", err)
+		klog.Info("connect to db failed !", err)
 		panic(err)
 	}
 	defer conn.Close()
-	fmt.Printf("\nSuccessfully connected to database!\n")
+
+	klog.Debug("\nSuccessfully connected to database!\n")
 
 	store := db.NewStore(conn)
 
@@ -38,6 +40,6 @@ func handler() {
 
 	err = server.Start(serverAdd)
 	if err != nil {
-		log.Fatal("cannot start server", err)
+		klog.Error("cannot sta rt server", err)
 	}
 }

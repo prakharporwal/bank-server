@@ -9,3 +9,10 @@ type Account struct {
 	Balance    int       `json:"balance"`
 	CreatedAt  time.Time `json:"created_at"`
 }
+
+type Transaction struct {
+	Id            int `json:"id"`
+	FromAccountID int `json:"from_account_id"`
+	ToAccountID   int `json:"to_account_id"`
+	Amount        int `json:"amount"`
+}

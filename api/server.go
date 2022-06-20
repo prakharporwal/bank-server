@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prakharporwal/bank-server/auth"
 	"github.com/prakharporwal/bank-server/db"
 )
 
@@ -19,8 +20,9 @@ func NewServer(store *db.Store) *Server {
 	router.GET("/account", server.GetAccount)
 	router.GET("/account/list/:page", server.ListAccount)
 	router.POST("/account", server.CreateAccount)
-
-	router.POST("/transaction", server.UpdateBalance)
+	router.POST("/login", auth.Login)
+	router.GET("/:account_id/statement/:page", server.GetAccountStatement)
+	router.POST("/transfer", server.TransferMoney)
 
 	server.router = router
 	return server
@@ -31,5 +33,5 @@ func (server *Server) Start(address string) error {
 }
 
 func Stop() {
-	fmt.Print("Stoping Server!")
+	fmt.Print("Stopping Server!")
 }

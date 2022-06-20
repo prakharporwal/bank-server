@@ -8,17 +8,17 @@ import (
 
 type Store struct {
 	// *Queries
-	db *sql.DB
+	conn *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
+func NewStore(conn *sql.DB) *Store {
 	return &Store{
-		db: db,
+		conn: conn,
 	}
 }
 
 func (store *Store) Execute(statement string, args ...interface{}) sql.Result {
-	result, err := store.db.Exec(statement, args...)
+	result, err := store.conn.Exec(statement, args...)
 
 	if err != nil {
 		log.Println(err)
@@ -29,7 +29,7 @@ func (store *Store) Execute(statement string, args ...interface{}) sql.Result {
 }
 
 func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
-	result, err := store.db.Query(statement, args...)
+	result, err := store.conn.Query(statement, args...)
 
 	if err != nil {
 		log.Println(err)
@@ -43,6 +43,6 @@ func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
 }
 
 func (store *Store) BeginTx(ctx context.Context, opts *sql.TxOptions) *sql.Tx {
-	tx, _ := store.db.BeginTx(ctx, opts)
+	tx, _ := store.conn.BeginTx(ctx, opts)
 	return tx
 }
