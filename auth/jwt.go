@@ -15,8 +15,8 @@ import (
 // }
 
 type LoginInput struct {
-	UserId   string `json:"user_id"`
-	Password string `json:"password"`
+	UserId   string `json:"user_id" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func Login(ctx *gin.Context) {
