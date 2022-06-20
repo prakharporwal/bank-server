@@ -56,7 +56,7 @@ func (server *Server) GetAccount(ctx *gin.Context) {
 	var accounts []model.Account
 	for result.Next() {
 		var account model.Account
-		if err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt); err != nil {
+		if err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt, &account.UpdatedAt); err != nil {
 			// if err := result.Scan(account); err != nil {
 			log.Println("Error Scanning All Results!", err)
 			ctx.JSON(http.StatusAccepted, accounts)

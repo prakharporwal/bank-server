@@ -19,9 +19,10 @@ func NewServer(store *db.Store) *Server {
 
 	router.GET("/account", server.GetAccount)
 	router.GET("/account/list/:page", server.ListAccount)
-	router.POST("/account", server.CreateAccount)
-	router.POST("/login", auth.Login)
 	router.GET("/:account_id/statement/:page", server.GetAccountStatement)
+	router.POST("/account", server.CreateAccount)
+
+	router.POST("/login", auth.Login)
 	router.POST("/transfer", server.TransferMoney)
 
 	server.router = router

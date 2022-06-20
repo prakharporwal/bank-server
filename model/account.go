@@ -8,6 +8,7 @@ type Account struct {
 	Currency   string    `json:"currency"`
 	Balance    int       `json:"balance"`
 	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type Transaction struct {
