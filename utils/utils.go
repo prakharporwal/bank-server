@@ -1,0 +1,23 @@
+package utils
+
+import (
+	"github.com/prakharporwal/bank-server/services"
+	"net/mail"
+	"time"
+)
+
+var klog services.Logger
+
+func IsValidEmail(email string) bool {
+	// validating using internal go mail lib
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		klog.Error("Couldn't validate email address!")
+		return false
+	}
+	return true
+}
+
+func GenerateTimeStampMicro() int64 {
+	return time.Now().UnixMicro()
+}
