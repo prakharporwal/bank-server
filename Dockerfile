@@ -1,6 +1,6 @@
 # Alpine is chosen for its small footprint
 # compared to Ubuntu
-FROM golang:1.16-alpine
+FROM golang:1.17-alpine
 
 # create work dir inside image
 WORKDIR /app
@@ -20,6 +20,8 @@ RUN go build -o /bank-server
 
 # EXPOSE port to connect to image
 EXPOSE 8080
+
+ENV GIN_MODE=release
 
 # run executable
 CMD ["/bank-server"]
