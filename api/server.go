@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prakharporwal/bank-server/auth"
 	"github.com/prakharporwal/bank-server/db"
 )
 
@@ -19,6 +20,7 @@ func NewServer(store *db.Store) *Server {
 	router.GET("/account", server.GetAccount)
 	router.GET("/account/list/:page", server.ListAccount)
 	router.POST("/account", server.CreateAccount)
+	router.POST("/login", auth.Login)
 
 	router.POST("/transaction", server.UpdateBalance)
 
