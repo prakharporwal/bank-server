@@ -85,7 +85,7 @@ func (server *Server) ListAccount(ctx *gin.Context) {
 	var accounts []model.Account
 	for result.Next() {
 		var account model.Account
-		err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt)
+		err := result.Scan(&account.Id, &account.OwnerEmail, &account.Balance, &account.Currency, &account.CreatedAt, &account.UpdatedAt)
 		if err != nil {
 			log.Println("Error Scanning All Results!", err)
 			ctx.JSON(http.StatusAccepted, accounts)
