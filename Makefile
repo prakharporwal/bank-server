@@ -1,4 +1,4 @@
-.PHONY: postgres server build migration dropdb migrateup migratedown
+.PHONY: postgres server build migration dropdb migrateup migratedown createdb
 
 postgres:
 	docker compose up -d
@@ -12,13 +12,13 @@ migration:
 	migrate create -ext sql -dir db/migrations -seq init_schema 
 
 dropdb:
-	docker execc -it postgres12 dropdb bank_server
+	docker exec -it postgres14 dropdb --username=admin bank_server
 
 migrateup: 
-	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/default_db?sslmode=disable" up
+	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" up
 
 migratedown:
-	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/default_db?sslmode=disable" down
+	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" down
 
 dockerimage:
 	# If facing an-error-failed-to-solve-with-frontend-dockerfile-v0
@@ -26,3 +26,11 @@ dockerimage:
 	
 	DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker build . -t grofffer/bank:1.1
 
+createdb:
+	docker exec -it postgres14 createdb --username=admin --owner=admin bank_server
+
+sqlc:
+	sqlc generate
+
+test:
+	go test -v -cover ./...
