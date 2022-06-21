@@ -1,6 +1,6 @@
 -- name: GetAccount :one
 SELECT * FROM accounts
-WHERE id = $1 LIMIT 1;
+WHERE owner_email = $1;
 
 -- name: ListAccounts :many
 SELECT * FROM accounts

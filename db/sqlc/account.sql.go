@@ -47,11 +47,11 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 
 const getAccount = `-- name: GetAccount :one
 SELECT id, owner_email, balance, currency, created_at, updated_at FROM accounts
-WHERE id = $1 LIMIT 1
+WHERE owner_email = $1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, getAccount, id)
+func (q *Queries) GetAccount(ctx context.Context, ownerEmail string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccount, ownerEmail)
 	var i Account
 	err := row.Scan(
 		&i.ID,

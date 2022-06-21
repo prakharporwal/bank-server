@@ -31,7 +31,7 @@ func createRandomAccount(t *testing.T) Account {
 
 func TestQueries_GetAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
-	account2, err := testQueries.GetAccount(context.Background(), account1.ID)
+	account2, err := testQueries.GetAccount(context.Background(), account1.OwnerEmail)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
