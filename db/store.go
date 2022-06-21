@@ -3,29 +3,55 @@ package db
 import (
 	"context"
 	"database/sql"
+	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/services"
 	"log"
 )
 
+//
+const (
+	dbSource = "postgresql://admin:password@localhost:5432/default_db?sslmode=disable"
+	dbDriver = "postgres"
+)
+
 type Store struct {
-	// *Queries
+	*db.Queries
 	conn *sql.DB
 }
 
-func NewStore(conn *sql.DB) *Store {
+var sqlInstance *Store
+
+var klog services.Logger
+
+func GetInstance() *Store {
+	if sqlInstance == nil {
+		conn, err := sql.Open(dbDriver, dbSource)
+		if err != nil {
+			klog.Error("connect to db failed !", err)
+			panic(err)
+		}
+		sqlInstance = newStore(conn)
+		klog.Debug("\nSuccessfully connected to database!\n")
+	}
+	return sqlInstance
+}
+
+func newStore(conn *sql.DB) *Store {
 	return &Store{
-		conn: conn,
+		conn:    conn,
+		Queries: db.New(conn),
 	}
 }
 
-func (store *Store) Execute(statement string, args ...interface{}) sql.Result {
-	result, err := store.conn.Exec(statement, args...)
+func (store *Store) Execute(statement string, args ...interface{}) error {
+	_, err := store.conn.Exec(statement, args...)
 
 	if err != nil {
 		log.Println(err)
-		return nil
+		return err
 	}
 
-	return result
+	return nil
 }
 
 func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
@@ -38,7 +64,6 @@ func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
 	// defer result.Close()
 
 	log.Println(result.Columns())
-
 	return result
 }
 
