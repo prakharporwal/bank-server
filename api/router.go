@@ -1,13 +1,21 @@
 package api
 
-//func AccountRoutes(router *gin.RouterGroup) {
-//	router.GET("/account", GetAccount)
-//	router.GET("/account/list/:page", server.ListAccount)
-//	router.GET("/:account_id/statement/:page", server.GetAccountStatement)
-//	router.POST("/account", server.CreateAccount)
-//}
-//
-//func TransferRoutes(router *gin.RouterGroup) {
-//	router.POST("/login", auth.Login)
-//	router.POST("/transfer", server.Transfer)
-//}
+import (
+	"github.com/gin-gonic/gin"
+	db2 "github.com/prakharporwal/bank-server/db"
+	//"github.com/prakharporwal/bank-server/auth"
+)
+
+func AccountRoutes(router *gin.RouterGroup) {
+	account := AccountController{db: db2.GetInstance()}
+	router.GET("/account", account.GetAccount)
+	router.GET("/account/list/:page", account.ListAccount)
+	router.POST("/account", account.CreateAccount)
+}
+
+func TransferRoutes(router *gin.RouterGroup) {
+	transfer := TransactionController{db: db2.GetInstance()}
+	//router.GET("/:account_id/statement/:page", account.Get)
+	//router.POST("/login", auth.Login)
+	router.POST("/transfer", transfer.Transfer)
+}

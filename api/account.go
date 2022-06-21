@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"github.com/prakharporwal/bank-server/api/apierror"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
+
+	db2 "github.com/prakharporwal/bank-server/db"
 	"github.com/prakharporwal/bank-server/utils"
 	"log"
 	"net/http"
@@ -14,12 +16,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type AccountController struct {
+	db *db2.Store
+}
+
 type createAccountRequest struct {
 	OwnerEmail string `json:"owner_email" binding:"required"`
 	Currency   string `json:"currency" binding:"required,oneof=INR USD CAD EUR"`
 }
 
-func (server *Server) CreateAccount(ctx *gin.Context) {
+func (controller *AccountController) CreateAccount(ctx *gin.Context) {
 	var request createAccountRequest
 
 	err := ctx.ShouldBindJSON(&request)
@@ -44,7 +50,7 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	//statement := `INSERT INTO accounts (owner_email,currency,balance) VALUES ($1,$2,$3)`
 	//server.store.Query(statement, account.OwnerEmail, account.Currency, 0) // initial balance will be 0
 
-	_, err = server.store.CreateAccount(context.Background(), args)
+	_, err = controller.db.CreateAccount(context.Background(), args)
 	if err != nil {
 		klog.Error("creating account failed", err)
 		ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)
@@ -56,7 +62,7 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{MESSAGE: "Account Created for :" + request.OwnerEmail})
 }
 
-func (server *Server) GetAccount(ctx *gin.Context) {
+func (controller *AccountController) GetAccount(ctx *gin.Context) {
 	ownerEmail := ctx.Query("owner_email")
 	accountId := ctx.Query("account_id")
 
@@ -74,9 +80,9 @@ func (server *Server) GetAccount(ctx *gin.Context) {
 		return
 	} else if accountId != "" {
 		id, _ := strconv.Atoi(accountId)
-		account, err = server.store.GetAccountById(context.Background(), int64(id))
+		account, err = controller.db.GetAccountById(context.Background(), int64(id))
 	} else {
-		account, err = server.store.GetAccountByOwnerEmail(context.Background(), ownerEmail)
+		account, err = controller.db.GetAccountByOwnerEmail(context.Background(), ownerEmail)
 	}
 	//var accounts model.Account
 	//for result.Next() {
@@ -105,7 +111,7 @@ func (server *Server) GetAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
-func (server *Server) ListAccount(ctx *gin.Context) {
+func (controller *AccountController) ListAccount(ctx *gin.Context) {
 
 	pageNum, _ := strconv.Atoi(ctx.Param("page"))
 
@@ -135,7 +141,7 @@ func (server *Server) ListAccount(ctx *gin.Context) {
 		Offset: int32((pageNum - 1) * pageSize),
 		Limit:  pageSize,
 	}
-	accounts, err := server.store.ListAccounts(ctx, args)
+	accounts, err := controller.db.ListAccounts(ctx, args)
 	if err != nil {
 		klog.Error("listing accounts failed ", err)
 		ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)

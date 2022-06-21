@@ -21,3 +21,7 @@ func IsValidEmail(email string) bool {
 func GenerateTimeStampMicro() int64 {
 	return time.Now().UnixMicro()
 }
+
+func GenerateTimeStampMilli() int64 {
+	return time.Now().UnixMilli()
+}
