@@ -46,7 +46,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 		klog.Error("failed getting receiver balance")
 		rollBackErr := tx.Rollback()
 		if rollBackErr != nil {
-			log.Fatal("Failed tx rollback! update drivers %v", rollBackErr)
+			log.Fatal("Failed tx rollback! update drivers", rollBackErr)
 			return
 		}
 		return
@@ -64,7 +64,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 		// Incase we find any error in the query execution, rollback the transaction
 		rollBackErr := tx.Rollback()
 		if rollBackErr != nil {
-			log.Fatal("Failed tx rollback! update drivers %v", rollBackErr)
+			log.Fatal("Failed tx rollback! update drivers", rollBackErr)
 			return
 		}
 		//ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
@@ -86,7 +86,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 		klog.Error("Failed executing record statement query for sender!", err)
 		rollBackErr := tx.Rollback()
 		if rollBackErr != nil {
-			log.Fatal("Failed tx rollback! update drivers %v", rollBackErr)
+			log.Fatal("Failed tx rollback! update drivers ", rollBackErr)
 			return
 		}
 		//ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed!"})
@@ -170,7 +170,7 @@ func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
 		klog.Error("Failed deduction query!", err)
 		rollBackErr := tx.Rollback()
 		if rollBackErr != nil {
-			log.Fatal("Failed tx rollback! update drivers %v", rollBackErr)
+			log.Fatal("Failed tx rollback! update drivers", rollBackErr)
 			return
 		}
 		//ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)
@@ -191,7 +191,7 @@ func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
 		klog.Error("Failed executing record statement query for receiver!", err)
 		rollBackErr := tx.Rollback()
 		if rollBackErr != nil {
-			log.Fatal("Failed tx rollback! update drivers %v", rollBackErr)
+			log.Fatal("Failed tx rollback! update drivers", rollBackErr)
 			return
 		}
 		//ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)
