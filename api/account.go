@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"github.com/prakharporwal/bank-server/api/apierror"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
 	"github.com/prakharporwal/bank-server/utils"
@@ -53,15 +54,26 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 
 func (server *Server) GetAccount(ctx *gin.Context) {
 	ownerEmail := ctx.Query("owner_email")
+	accountId := ctx.Query("account_id")
 
-	klog.Debug(ownerEmail)
+	klog.Debug("owner email", ownerEmail)
+	klog.Debug("account id", accountId)
 
 	//statement := `SELECT * FROM accounts WHERE owner_email=($1)`
 	//result := server.store.Query(statement, ownerEmail)
 	//defer result.Close()
-
-	account, err := server.store.GetAccount(context.Background(), ownerEmail)
-
+	var account db.Account
+	var err error
+	if accountId == "" && ownerEmail == "" {
+		log.Println("Error Scanning Results !", err)
+		ctx.JSON(http.StatusExpectationFailed, gin.H{MESSAGE: "pass request QUERY PARAM owner_email or account_id"})
+		return
+	} else if accountId != "" {
+		id, _ := strconv.Atoi(accountId)
+		account, err = server.store.GetAccountById(context.Background(), int64(id))
+	} else {
+		account, err = server.store.GetAccountByOwnerEmail(context.Background(), ownerEmail)
+	}
 	//var accounts model.Account
 	//for result.Next() {
 	//	var account model.Account
@@ -75,15 +87,16 @@ func (server *Server) GetAccount(ctx *gin.Context) {
 	//}
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("Account Not Found for Email : ", ownerEmail)
+			ctx.JSON(http.StatusNotFound, apierror.NotFound)
+			return
+		}
 		log.Println("Error Scanning Results !", err)
 		ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)
 		return
 	}
-	//if account == nil {
-	//	log.Println("Account Not Found for Email : ", ownerEmail)
-	//	ctx.JSON(http.StatusNotFound, apierror.NotFound)
-	//	return
-	//}
+
 	log.Println("Accounts :", account)
 	ctx.JSON(http.StatusOK, account)
 }

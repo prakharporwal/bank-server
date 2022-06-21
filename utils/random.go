@@ -11,7 +11,7 @@ func init() {
 }
 
 func RandomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	var letters = []rune("abcdefghijklmnopqrstuvwxyz.+")
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
@@ -33,9 +33,15 @@ func RandomEmail() string {
 }
 
 func RandomNumber64() int64 {
-	return rand.Int63()
+	return rand.Int63() + 1 // adding 1 will never make it zero
 }
 
 func RandomNumber() int {
-	return rand.Int()
+	return rand.Int() + 1 // adding 1 will never make it zero
+}
+
+func RandomCurrency() string {
+	currency := []string{"CAD", "INR", "USD"}
+	n := len(currency)
+	return currency[rand.Intn(n)]
 }

@@ -1,4 +1,8 @@
--- name: GetAccount :one
+-- name: GetAccountById :one
+SELECT * FROM accounts
+WHERE id = $1;
+
+-- name: GetAccountByOwnerEmail :one
 SELECT * FROM accounts
 WHERE owner_email = $1;
 
@@ -17,7 +21,25 @@ RETURNING *;
 DELETE FROM accounts
 WHERE id = $1;
 
--- name: UpdateAccount :one
+-- name: UpdateAccountBalanceById :one
 UPDATE accounts SET balance = $2
 WHERE id = $1
+RETURNING *;
+
+-- name: GetBalanceByAccountId :one
+SELECT balance FROM accounts
+WHERE id=($1);
+
+-- name: GetBalanceByOwnerEmail :one
+SELECT balance FROM accounts
+WHERE owner_email=($1);
+
+-- name: CreateTransferRecord :one
+INSERT INTO transactions(transaction_id, from_account_id,to_account_id,amount)
+VALUES($1,$2,$3,$4)
+RETURNING *;
+
+-- name: CreateAccountStatementEntry :one
+INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount, type)
+VALUES($1,$2,$3,$4,$5)
 RETURNING *;

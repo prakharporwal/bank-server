@@ -5,7 +5,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -19,21 +18,21 @@ type Account struct {
 }
 
 type AccountTransactionsEntry struct {
-	ID            int64         `json:"id"`
-	TransactionID sql.NullInt64 `json:"transaction_id"`
-	AccountID     sql.NullInt64 `json:"account_id"`
-	OtherAccount  sql.NullInt64 `json:"other_account"`
+	ID            int64 `json:"id"`
+	TransactionID int64 `json:"transaction_id"`
+	AccountID     int64 `json:"account_id"`
+	OtherAccount  int64 `json:"other_account"`
 	// must be positive
-	Amount    int64          `json:"amount"`
-	Type      sql.NullString `json:"type"`
-	CreatedAt time.Time      `json:"created_at"`
+	Amount    int64     `json:"amount"`
+	Type      string    `json:"type"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Transaction struct {
-	ID            int64         `json:"id"`
-	TransactionID sql.NullInt64 `json:"transaction_id"`
-	FromAccountID sql.NullInt64 `json:"from_account_id"`
-	ToAccountID   sql.NullInt64 `json:"to_account_id"`
+	ID            int64 `json:"id"`
+	TransactionID int64 `json:"transaction_id"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
 	// can be negative depending on debit or credit
 	Amount    int64     `json:"amount"`
 	CreatedAt time.Time `json:"created_at"`
