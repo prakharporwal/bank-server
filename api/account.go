@@ -44,8 +44,12 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	//statement := `INSERT INTO accounts (owner_email,currency,balance) VALUES ($1,$2,$3)`
 	//server.store.Query(statement, account.OwnerEmail, account.Currency, 0) // initial balance will be 0
 
-	server.store.CreateAccount(context.Background(), args)
-
+	_, err = server.store.CreateAccount(context.Background(), args)
+	if err != nil {
+		klog.Error("creating account failed", err)
+		ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)
+		return
+	}
 	log.Println(request.OwnerEmail)
 	log.Println(request.Currency)
 
