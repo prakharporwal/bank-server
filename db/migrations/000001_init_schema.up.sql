@@ -9,20 +9,20 @@ CREATE TABLE "accounts" (
 
 CREATE TABLE "transactions" (
     "id" BIGSERIAL PRIMARY KEY,
-    "transaction_id" BIGINT unique ,
-    "from_account_id" BIGINT,
-    "to_account_id" BIGINT,
+    "transaction_id" BIGINT unique NOT NULL ,
+    "from_account_id" BIGINT NOT NULL ,
+    "to_account_id" BIGINT not null ,
     "amount" BIGINT NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE "account_transactions_entries" (
     "id" BIGSERIAL PRIMARY KEY,
-    "transaction_id" BIGINT,
-    "account_id" bigint,
-    "other_account" bigint,
+    "transaction_id" BIGINT NOT NULL ,
+    "account_id" bigint NOT NULL ,
+    "other_account" bigint NOT NULL ,
     "amount" bigint NOT NULL,
-    "type" varchar,
+    "type" varchar NOT NULL ,
     "created_at" timestamptz NOT NULL DEFAULT NOW()
 );
 

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
 	"github.com/prakharporwal/bank-server/db"
@@ -25,20 +23,20 @@ func main() {
 func handler() {
 	klog.Info("Hey I am creating a Bank Payment System! Will be fun to work on !", "hhh")
 
-	conn, err := sql.Open(dbDriver, dbSource)
-	if err != nil {
-		klog.Info("connect to db failed !", err)
-		panic(err)
-	}
-	defer conn.Close()
+	//defer conn.Close()
 
-	klog.Debug("\nSuccessfully connected to database!\n")
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		fmt.Println("Recovered in f", r)
+	//	}
+	//}()
 
-	store := db.NewStore(conn)
+	store := db.GetInstance()
 
+	//store := db.GetInstance()
 	server := api.NewServer(store)
 
-	err = server.Start(serverAdd)
+	err := server.Start(serverAdd)
 	if err != nil {
 		klog.Error("cannot sta rt server", err)
 	}
