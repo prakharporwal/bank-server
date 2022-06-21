@@ -37,7 +37,9 @@ func handler() {
 	server := api.NewServer(store)
 
 	err := server.Start(serverAdd)
+	defer server.Stop()
 	if err != nil {
-		klog.Error("cannot sta rt server", err)
+		klog.Error("cannot start server", err)
 	}
+
 }
