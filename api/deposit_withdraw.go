@@ -17,9 +17,9 @@ type DepositRequestParams struct {
 
 // POST
 // deposit in bank
-func (server *Server) Deposit(reqBody DepositRequestParams) {
+func (controller *TransactionController) Deposit(reqBody DepositRequestParams) {
 
-	tx := server.store.BeginTx(context.Background(), &sql.TxOptions{})
+	tx := controller.db.BeginTx(context.Background(), &sql.TxOptions{})
 
 	// get receiver balance and update
 	//receiverBalanceQuery := "SELECT balance FROM accounts WHERE id=($1)"
@@ -41,7 +41,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 	//		log.Fatal(err)
 	//	}
 	//}
-	receiverBalance, err := server.store.GetBalanceByAccountId(context.Background(), reqBody.AccountId)
+	receiverBalance, err := controller.db.GetBalanceByAccountId(context.Background(), reqBody.AccountId)
 	if err != nil {
 		klog.Error("failed getting receiver balance")
 		rollBackErr := tx.Rollback()
@@ -56,7 +56,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 		ID:      reqBody.AccountId,
 		Balance: receiverBalance + reqBody.Amount,
 	}
-	_, err = server.store.WithTx(tx).UpdateAccountBalanceById(context.Background(), arg)
+	_, err = controller.db.WithTx(tx).UpdateAccountBalanceById(context.Background(), arg)
 	//incrementStatement := "UPDATE accounts SET balance=($1) WHERE id=($2)"
 	//_, err = tx.ExecContext(ctx, incrementStatement, receiverBalance+reqBody.Amount, reqBody.AccountId)
 	if err != nil {
@@ -80,7 +80,7 @@ func (server *Server) Deposit(reqBody DepositRequestParams) {
 	}
 	//senderRecordStatement := "INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount,type) VALUES($1,$2,$3,$4,$5)"
 	//_, err = tx.ExecContext(ctx, senderRecordStatement, reqBody.TransactionId, reqBody.DepositToAccountId, reqBody.AccountId, reqBody.Amount, DEBIT)
-	_, err = server.store.WithTx(tx).CreateAccountStatementEntry(context.Background(), args)
+	_, err = controller.db.WithTx(tx).CreateAccountStatementEntry(context.Background(), args)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
 		klog.Error("Failed executing record statement query for sender!", err)
@@ -110,7 +110,7 @@ type WithdrawRequestParams struct {
 	Currency          string `json:"currency" binding:"required"`
 }
 
-func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
+func (controller *TransactionController) Withdraw(reqBody WithdrawRequestParams) {
 	//var reqBody withdrawRequest
 	//err := ctx.ShouldBindJSON(reqBody)
 	//if err != nil {
@@ -118,9 +118,9 @@ func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
 	//	return
 	//}
 
-	tx := server.store.BeginTx(context.Background(), &sql.TxOptions{})
+	tx := controller.db.BeginTx(context.Background(), &sql.TxOptions{})
 
-	senderBalance, err := server.store.WithTx(tx).GetBalanceByAccountId(context.Background(), reqBody.AccountId)
+	senderBalance, err := controller.db.WithTx(tx).GetBalanceByAccountId(context.Background(), reqBody.AccountId)
 	if err != nil {
 		klog.Error("getting account balance failed!", err)
 		return
@@ -158,7 +158,7 @@ func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
 		ID:      reqBody.AccountId,
 	}
 	// deduct amount
-	_, err = server.store.WithTx(tx).UpdateAccountBalanceById(context.Background(), arg)
+	_, err = controller.db.WithTx(tx).UpdateAccountBalanceById(context.Background(), arg)
 	if err != nil {
 		klog.Error("updating account balance failed!", err)
 		return
@@ -183,7 +183,7 @@ func (server *Server) Withdraw(reqBody WithdrawRequestParams) {
 		OtherAccount:  reqBody.WithdrawAccountId,
 		Type:          DEBIT,
 	}
-	_, err = server.store.WithTx(tx).CreateAccountStatementEntry(context.Background(), args)
+	_, err = controller.db.WithTx(tx).CreateAccountStatementEntry(context.Background(), args)
 	//receiverRecordStatement := "INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount, type) VALUES($1,$2,$3,$4,$5)"
 	//_, err = tx.ExecContext(ctx, receiverRecordStatement, reqBody.TransactionId, reqBody.AccountId, reqBody.WithdrawAccountId, reqBody.Amount, CREDIT)
 	if err != nil {

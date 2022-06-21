@@ -29,9 +29,9 @@ func createRandomAccount(t *testing.T) Account {
 	return account
 }
 
-func TestQueries_GetAccount(t *testing.T) {
+func TestQueries_GetAccountByOwnerEmail(t *testing.T) {
 	account1 := createRandomAccount(t)
-	account2, err := testQueries.GetAccount(context.Background(), account1.OwnerEmail)
+	account2, err := testQueries.GetAccountByOwnerEmail(context.Background(), account1.OwnerEmail)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
@@ -43,14 +43,14 @@ func TestQueries_GetAccount(t *testing.T) {
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
 }
 
-func TestQueries_UpdateAccount(t *testing.T) {
+func TestQueries_UpdateAccountBalanceById(t *testing.T) {
 	account := createRandomAccount(t)
 
-	args := UpdateAccountParams{
+	args := UpdateAccountBalanceByIdParams{
 		ID:      account.ID,
 		Balance: utils.RandomNumber64(),
 	}
-	updatedAccount, err := testQueries.UpdateAccount(context.Background(), args)
+	updatedAccount, err := testQueries.UpdateAccountBalanceById(context.Background(), args)
 
 	require.NoError(t, err)
 

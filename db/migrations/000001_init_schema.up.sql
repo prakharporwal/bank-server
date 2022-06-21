@@ -26,6 +26,17 @@ CREATE TABLE "account_transactions_entries" (
     "created_at" timestamptz NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE "users"(
+    user_id BIGSERIAL PRIMARY KEY ,
+    username varchar NOT NULL ,
+    user_email varchar NOT NULL ,
+    password_hash varchar NOT NULL ,
+    is_verified boolean NOT NULL DEFAULT false,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+
 CREATE INDEX ON "accounts" ("owner_email");
 
 CREATE INDEX ON "transactions" ("from_account_id");
@@ -55,8 +66,15 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- setting trigger to update timestamp
+-- setting trigger to update timestamp accounts table
 CREATE TRIGGER set_timestamp
     BEFORE UPDATE ON accounts
     FOR EACH ROW
     EXECUTE PROCEDURE trigger_set_timestamp();
+
+
+-- setting trigger to update timestamp user table
+CREATE TRIGGER set_timestamp
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();

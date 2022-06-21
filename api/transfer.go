@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	db2 "github.com/prakharporwal/bank-server/db"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
 	"github.com/prakharporwal/bank-server/utils"
 	"log"
@@ -21,8 +22,12 @@ const (
 	MESSAGE = "message"
 )
 
+type TransactionController struct {
+	db *db2.Store
+}
+
 // TODO : Requires Authentication ADD its
-func (server *Server) Transfer(ctx *gin.Context) {
+func (controller *TransactionController) Transfer(ctx *gin.Context) {
 
 	var transaction transferRequest
 	err := ctx.ShouldBindJSON(&transaction)
@@ -47,7 +52,7 @@ func (server *Server) Transfer(ctx *gin.Context) {
 		ToAccountID:   transaction.ToAccountId,
 		Amount:        transaction.Amount,
 	}
-	_, err = server.store.CreateTransferRecord(ctx, arg)
+	_, err = controller.db.CreateTransferRecord(ctx, arg)
 	//err = server.store.Execute(recordStatement, txnId, transaction.FromAccountId, transaction.ToAccountId, transaction.Amount)
 	if err != nil {
 		// Incase we find any error in the query execution, rollback the transaction
@@ -65,7 +70,7 @@ func (server *Server) Transfer(ctx *gin.Context) {
 		WithdrawAccountId: transaction.ToAccountId,
 		Currency:          transaction.Currency,
 	}
-	server.Withdraw(withdraw)
+	controller.Withdraw(withdraw)
 
 	deposit := DepositRequestParams{
 		TransactionId:      txnId,
@@ -74,7 +79,7 @@ func (server *Server) Transfer(ctx *gin.Context) {
 		DepositToAccountId: transaction.FromAccountId,
 		Currency:           transaction.Currency,
 	}
-	server.Deposit(deposit)
+	controller.Deposit(deposit)
 
 	//tx := server.store.BeginTx(ctx, &sql.TxOptions{})
 	//senderRecordStatement := "INSERT INTO account_transactions_entries(transaction_id,account_id,other_account, amount,type) VALUES($1,$2,$3,$4,$5)"
