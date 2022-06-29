@@ -4,7 +4,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
 	"github.com/prakharporwal/bank-server/db"
-	"github.com/prakharporwal/bank-server/services"
+	"github.com/prakharporwal/bank-server/services/klog"
 )
 
 const (
@@ -12,8 +12,6 @@ const (
 	dbSource  = "postgresql://admin:password@localhost:5432/default_db?sslmode=disable"
 	dbDriver  = "postgres"
 )
-
-var klog services.Logger
 
 func main() {
 	// lambda.Start(handler)

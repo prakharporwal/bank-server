@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/apierror"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
-	"github.com/prakharporwal/bank-server/services"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"github.com/prakharporwal/bank-server/utils"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -14,7 +14,6 @@ import (
 // set user to be inactive
 // send user activation link email
 // delete user if not activated on next 7 days
-var klog services.Logger
 
 type signUpRequest struct {
 	Username  string `json:"username" binding:"required"`

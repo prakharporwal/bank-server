@@ -1,15 +1,13 @@
 package api
 
 import (
-	"github.com/prakharporwal/bank-server/services"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
-
-var klog services.Logger
 
 const pageSize = 10
 

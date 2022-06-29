@@ -1,12 +1,10 @@
 package utils
 
 import (
-	"github.com/prakharporwal/bank-server/services"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"net/mail"
 	"time"
 )
-
-var klog services.Logger
 
 func IsValidEmail(email string) bool {
 	// validating using internal go mail lib

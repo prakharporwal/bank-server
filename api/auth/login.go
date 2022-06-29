@@ -4,13 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/apierror"
 	db2 "github.com/prakharporwal/bank-server/db"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 )
 
 type AuthController struct {
-	DB *db2.Store
+	DB *db2.SQLStore
 }
 
 type loginRequest struct {
