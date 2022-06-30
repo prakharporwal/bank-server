@@ -4,7 +4,7 @@ Backend Server for a bank Infrastructure (Go and Postgres)
 
 ![docker image](https://github.com/prakharporwal/bank-server/actions/workflows/ecs-image-build.yml/badge.svg)
 
-## RoadMap
+## RoadMap + Learnings
 
 - [x] Design Database Schema
       ![Table Schema](bank-server.png)
@@ -34,14 +34,17 @@ else
     - [x] Install Kubecost for cost management
     - [x] install ArgoCD for GitOps
 
+- [x] Setup Monitoring Using Prometheus and Grafana- [steps added](k8s/prometheus-install.md)
+- [x] Write Unit Tests by using gomock to mock DB.
+
 ### TODO
-- [ ] Setup Monitoring Using Prometheus
 - [ ] Create Docker Network to let the image connect with the db
       `docker network create bank-network`
       `docker network connect bank-network postgres12`
-- [ ] Read env variables from config file
-- [ ] Write Unit Tests by using Mock to mock DB.
 
+- [ ] Make Auth API using PASETO ( also support extension for JWT )
+- [ ] Handle race condition in transaction.
+- [ ] Handle deadlock in DB due to multiple threads of transaction
 
 ## How to Use ?
 
