@@ -2,7 +2,9 @@
 
 Backend Server for a bank Infrastructure (Go and Postgres)
 
-## Things to do
+![docker image](https://github.com/prakharporwal/bank-server/actions/workflows/ecs-image-build.yml/badge.svg)
+
+## RoadMap + Learnings
 
 - [x] Design Database Schema
       ![Table Schema](bank-server.png)
@@ -16,19 +18,63 @@ Backend Server for a bank Infrastructure (Go and Postgres)
 - [x] Write Unit test for the API's
 - [x] Dockerize (create a docker image) for the go app and db
       [See Dockerfile here](Dockerfile)
+- [x] Create CI using Github Actions on master branch
+  - [x] Push Docker Image to AWS ECR via actions
+  - [x] Run go build and test
+  - [x] Add Datree in CI for misconfig checking
+- [x] Handle DB Transactions use the idea
+```
+BEGIN
+if Succeed
+    COMMIT
+else
+    ROLLBACK
+```
+- [x] Deploy on Kubernetes using AWS EKS and
+    - [x] Install Kubecost for cost management
+    - [x] install ArgoCD for GitOps
+
+- [x] Setup Monitoring Using Prometheus and Grafana- [steps added](k8s/prometheus-install.md)
+- [x] Write Unit Tests by using gomock to mock DB.
+
+### TODO
 - [ ] Create Docker Network to let the image connect with the db
       `docker network create bank-network`
       `docker network connect bank-network postgres12`
-- [x] Create CI using Github Actions on master branch
-- [ ] Deploy the image in minikube locally
 
-- [ ] Handle Transactions
-- [ ] Deploy on Kubernetes using AWS EKS
-- [ ] Setup Monitoring Using Prometheus
-- [ ] Read env variables from config file
-- [ ] Write Unit Tests by using Mock to mock DB.
+- [ ] Make Auth API using PASETO ( also support extension for JWT )
+- [ ] Handle race condition in transaction.
+- [ ] Handle deadlock in DB due to multiple threads of transaction
 
-### Things I am learning
+## How to Use ?
 
-Dockerfile
-Docker Network
+#### Pre-requisite :
+- go1.17 or above installed
+  - docker
+  - make command
+1. Install essential go modules
+2. run `make postgres` for making a postgres db using DOCKER
+3. Connect to the DB using `user: admin` and `password: password`
+   and `db = default_db`.
+4. run the [bank-server.sql](db/bank-server.sql) file to create db tables.
+5. run `make server` the server will be up and running on localhost:8080
+
+- POST /account for creating a new account
+
+```json lines
+{
+    "owner_email":"sample@getmail.com",
+    "currency":"USD"
+}
+```
+
+- GET /account?owner_email=email@email.com for gettiing account details using email
+- POST /transfer for transferring money to other bank account
+
+```json lines
+{
+    "from_account_id": 2,
+    "to_account_id": 1,
+    "amount": 15
+}
+```

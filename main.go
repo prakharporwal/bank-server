@@ -1,13 +1,10 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
-
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
 	"github.com/prakharporwal/bank-server/db"
+	"github.com/prakharporwal/bank-server/services/klog"
 )
 
 const (
@@ -22,22 +19,25 @@ func main() {
 }
 
 func handler() {
-	fmt.Println("Hey I am creating a Bank Payment System! Will be fun to work on !")
+	klog.Info("Hey I am creating a Bank Payment System! Will be fun to work on !", "hhh")
 
-	conn, err := sql.Open(dbDriver, dbSource)
-	if err != nil {
-		log.Fatal("connect to db failed !", err)
-		panic(err)
-	}
-	defer conn.Close()
-	fmt.Printf("\nSuccessfully connected to database!\n")
+	//defer conn.Close()
 
-	store := db.NewStore(conn)
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		fmt.Println("Recovered in f", r)
+	//	}
+	//}()
 
+	store := db.GetInstance()
+
+	//store := db.GetInstance()
 	server := api.NewServer(store)
 
-	err = server.Start(serverAdd)
+	err := server.Start(serverAdd)
+	defer server.Stop()
 	if err != nil {
-		log.Fatal("cannot start server", err)
+		klog.Error("cannot start server", err)
 	}
+
 }

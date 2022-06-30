@@ -2,26 +2,36 @@ package api
 
 import (
 	"fmt"
-
 	"github.com/gin-gonic/gin"
+	"github.com/prakharporwal/bank-server/api/auth"
 	"github.com/prakharporwal/bank-server/db"
 )
 
 type Server struct {
-	store  *db.Store
+	store  *db.SQLStore
 	router *gin.Engine
 }
 
-func NewServer(store *db.Store) *Server {
+func NewServer(store *db.SQLStore) *Server {
 	router := gin.Default()
 	server := &Server{store: store}
 
-	router.GET("/account", server.GetAccount)
-	router.GET("/account/list/:page", server.ListAccount)
-	router.POST("/account", server.CreateAccount)
+	account := AccountController{db: store}
 
-	router.POST("/transaction", server.UpdateBalance)
+	router.GET("/account", account.GetAccount)
+	router.GET("/account/list/:page", account.ListAccount)
+	router.GET("/:account_id/statement/:page", server.GetAccountStatement)
+	router.POST("/account", account.CreateAccount)
 
+	transfer := TransactionController{db: store}
+	router.POST("/transfer", transfer.Transfer)
+
+	// auth
+	auth := auth.AuthController{DB: store}
+	router.POST("/login", auth.Login)
+	router.POST("/signup", auth.SignUp)
+
+	router.GET("/health", HealthCheck)
 	server.router = router
 	return server
 }
@@ -30,6 +40,6 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
-func Stop() {
-	fmt.Print("Stoping Server!")
+func (server *Server) Stop() {
+	fmt.Print("Stopping Server!")
 }

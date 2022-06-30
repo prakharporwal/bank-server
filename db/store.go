@@ -3,33 +3,60 @@ package db
 import (
 	"context"
 	"database/sql"
+	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"log"
 )
 
-type Store struct {
-	// *Queries
-	db *sql.DB
+const (
+	dbSource = "postgresql://admin:password@localhost:5432/default_db?sslmode=disable"
+	dbDriver = "postgres"
+)
+
+type Store interface {
+	db.Querier
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
-		db: db,
+type SQLStore struct {
+	*db.Queries
+	conn *sql.DB
+}
+
+var sqlInstance *SQLStore
+
+func GetInstance() *SQLStore {
+	if sqlInstance == nil {
+		conn, err := sql.Open(dbDriver, dbSource)
+		if err != nil {
+			klog.Error("connect to db failed !", err)
+			panic(err)
+		}
+		sqlInstance = newStore(conn)
+		klog.Debug("\nSuccessfully connected to database!\n")
+	}
+	return sqlInstance
+}
+
+func newStore(conn *sql.DB) *SQLStore {
+	return &SQLStore{
+		conn:    conn,
+		Queries: db.New(conn),
 	}
 }
 
-func (store *Store) Execute(statement string, args ...interface{}) sql.Result {
-	result, err := store.db.Exec(statement, args...)
+func (store SQLStore) Execute(statement string, args ...interface{}) error {
+	_, err := store.conn.Exec(statement, args...)
 
 	if err != nil {
 		log.Println(err)
-		return nil
+		return err
 	}
 
-	return result
+	return nil
 }
 
-func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
-	result, err := store.db.Query(statement, args...)
+func (store *SQLStore) Query(statement string, args ...interface{}) *sql.Rows {
+	result, err := store.conn.Query(statement, args...)
 
 	if err != nil {
 		log.Println(err)
@@ -38,11 +65,10 @@ func (store *Store) Query(statement string, args ...interface{}) *sql.Rows {
 	// defer result.Close()
 
 	log.Println(result.Columns())
-
 	return result
 }
 
-func (store *Store) BeginTx(ctx context.Context, opts *sql.TxOptions) *sql.Tx {
-	tx, _ := store.db.BeginTx(ctx, opts)
+func (store *SQLStore) BeginTx(ctx context.Context, opts *sql.TxOptions) *sql.Tx {
+	tx, _ := store.conn.BeginTx(ctx, opts)
 	return tx
 }

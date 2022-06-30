@@ -2,12 +2,13 @@ version: "3.8"
 services:
   database:
     image: 'postgres:14-alpine'
+    container_name: postgres14
     ports:
      - 5432:5432
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: default_db
+      POSTGRES_DB: bank_server
 
   # The `volumes` tag allows us to share a folder with our container.
   # Its syntax is as follows: [folder path on our machine]:[folder path to retrieve in the container]
