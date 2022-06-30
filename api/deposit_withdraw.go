@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"log"
 )
 

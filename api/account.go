@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/prakharporwal/bank-server/api/apierror"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/services/klog"
 
 	db2 "github.com/prakharporwal/bank-server/db"
 	"github.com/prakharporwal/bank-server/utils"
@@ -17,7 +18,7 @@ import (
 )
 
 type AccountController struct {
-	db *db2.Store
+	db *db2.SQLStore
 }
 
 type createAccountRequest struct {

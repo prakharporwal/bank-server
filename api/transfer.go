@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	db2 "github.com/prakharporwal/bank-server/db"
 	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/services/klog"
 	"github.com/prakharporwal/bank-server/utils"
 	"log"
 	"net/http"
@@ -23,7 +24,7 @@ const (
 )
 
 type TransactionController struct {
-	db *db2.Store
+	db *db2.SQLStore
 }
 
 // TODO : Requires Authentication ADD its
