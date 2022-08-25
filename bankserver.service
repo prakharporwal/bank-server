@@ -3,7 +3,7 @@ Description=Bank Server Service
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /home/ubuntu/bank-server/bank-server
+ExecStart=/home/ubuntu/bank-server/bank-server
 
 [Install]
 WantedBy=multi-user.target

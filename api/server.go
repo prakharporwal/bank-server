@@ -27,7 +27,9 @@ func NewServer(store *db.SQLStore) *Server {
 			"content": "This is an index page...",
 		})
 	})
-
+	router.GET("/hello", func(context *gin.Context) {
+		context.JSON(200, "Hello There")
+	})
 	router.GET("/account", account.GetAccount)
 	router.GET("/account/list/:page", account.ListAccount)
 	router.GET("/:account_id/statement/:page", server.GetAccountStatement)
