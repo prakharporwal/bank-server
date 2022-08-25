@@ -1,0 +1,9 @@
+[Unit]
+Description=Bank Server Service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/ubuntu/bankserver
+
+[Install]
+WantedBy=multi-user.target

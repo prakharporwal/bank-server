@@ -2,6 +2,8 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/auth"
 	"github.com/prakharporwal/bank-server/db"
@@ -17,6 +19,14 @@ func NewServer(store *db.SQLStore) *Server {
 	server := &Server{store: store}
 
 	account := AccountController{db: store}
+
+	//router.LoadHTMLGlob("templates/build/*.html")
+
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"content": "This is an index page...",
+		})
+	})
 
 	router.GET("/account", account.GetAccount)
 	router.GET("/account/list/:page", account.ListAccount)

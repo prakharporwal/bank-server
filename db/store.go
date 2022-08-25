@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	dbSource = "postgresql://admin:password@localhost:5432/default_db?sslmode=disable"
+	dbSource = "postgresql://admin:password@localhost:5432/bank_server?sslmode=disable"
 	dbDriver = "postgres"
 )
 
