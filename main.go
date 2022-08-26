@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
 	"github.com/prakharporwal/bank-server/db"
@@ -11,6 +12,10 @@ const (
 	serverAdd = "0.0.0.0:8080"
 	dbDriver  = "postgres"
 )
+
+func init() {
+	gin.SetMode(gin.ReleaseMode)
+}
 
 func main() {
 	// lambda.Start(handler)
