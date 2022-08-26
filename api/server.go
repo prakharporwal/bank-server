@@ -2,8 +2,7 @@ package api
 
 import (
 	"fmt"
-	"net/http"
-
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/auth"
 	"github.com/prakharporwal/bank-server/db"
@@ -20,13 +19,8 @@ func NewServer(store *db.SQLStore) *Server {
 
 	account := AccountController{db: store}
 
-	//router.LoadHTMLGlob("templates/build/*.html")
+	router.Use(static.Serve("/", static.LocalFile("./ui", true)))
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"content": "This is an index page...",
-		})
-	})
 	router.GET("/hello", func(context *gin.Context) {
 		context.JSON(200, "Hello There")
 	})
