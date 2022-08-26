@@ -9,7 +9,6 @@ import (
 
 const (
 	serverAdd = "0.0.0.0:8080"
-	dbSource  = "postgresql://admin:password@localhost:5432/default_db?sslmode=disable"
 	dbDriver  = "postgres"
 )
 
