@@ -1,0 +1,25 @@
+
+.page{
+    display: grid;
+    grid-template-rows: 1fr 3fr 1fr;
+    height: 90vh;
+    box-sizing: content-box;
+}
+
+.heading{
+    margin: 4px;
+    font-size: 48px;
+}
+
+.info{
+    width: 80vw;
+    text-align: start;
+    font-size: 20px;
+    margin: 4px;
+}
+
+footer{
+    margin: 4px;
+    text-align: end;
+    font-size: 16px;
+}
