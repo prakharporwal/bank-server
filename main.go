@@ -22,16 +22,11 @@ func main() {
 	handler()
 }
 
+const RedisAddr = "13.233.195.130:6379"
+
 func handler() {
 	klog.Info("Hey I am creating a Bank Payment System! Will be fun to work on !", "hhh")
-
 	//defer conn.Close()
-
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		fmt.Println("Recovered in f", r)
-	//	}
-	//}()
 
 	store := db.GetInstance()
 
@@ -43,5 +38,4 @@ func handler() {
 	if err != nil {
 		klog.Error("cannot start server", err)
 	}
-
 }

@@ -11,7 +11,7 @@ type KLogger interface {
 	Debug()
 }
 
-func Info(message string, args ...interface{}) {
+func Info(message string, args interface{}) {
 	log.Println("INFO :", message, args)
 }
 

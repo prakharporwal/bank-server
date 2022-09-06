@@ -2,10 +2,11 @@ package api
 
 import (
 	"fmt"
-	"github.com/gin-gonic/contrib/static"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/auth"
 	"github.com/prakharporwal/bank-server/db"
+	"github.com/prakharporwal/bank-server/db/cache"
 )
 
 type Server struct {
@@ -19,7 +20,7 @@ func NewServer(store *db.SQLStore) *Server {
 
 	account := AccountController{db: store}
 
-	router.Use(static.Serve("/", static.LocalFile("./ui", true)))
+	// router.Use(static.Serve("/", static.LocalFile("./ui", true)))
 
 	router.GET("/hello", func(context *gin.Context) {
 		context.JSON(200, "Hello There")
@@ -36,6 +37,8 @@ func NewServer(store *db.SQLStore) *Server {
 	auth := auth.AuthController{DB: store}
 	router.POST("/login", auth.Login)
 	router.POST("/signup", auth.SignUp)
+
+	router.GET("/cache/redis", cache.GetCacheValue)
 
 	router.GET("/health", HealthCheck)
 	server.router = router
