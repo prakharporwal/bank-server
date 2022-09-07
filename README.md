@@ -34,22 +34,28 @@ else
     - [x] Install Kubecost for cost management
     - [x] install ArgoCD for GitOps
 
-- [x] Setup Monitoring Using Prometheus and Grafana- [steps added](k8s/prometheus-install.md)
+- [x] Setup Monitoring Using Prometheus [steps](k8s/prometheus-install.md)
 - [x] Write Unit Tests by using gomock to mock DB.
 
-### TODO
-- [ ] Create Docker Network to let the image connect with the db
+- [x] Create Docker Network to let the image connect with the db
       `docker network create bank-network`
       `docker network connect bank-network postgres12`
+- [x] Make Auth API using PASETO ( also support extension for JWT )
+- [x] Use UUID to store transaction data in DB.
 
-- [ ] Make Auth API using PASETO ( also support extension for JWT )
+# TODO
 - [ ] Handle race condition in transaction.
 - [ ] Handle deadlock in DB due to multiple threads of transaction
-
+- [ ] Create UI form for login signup 
+- [ ] Create a UI for the user to access the Transactions
+- [ ] Create Policy engine for Permission on a Account
+- 
 ## How to Use ?
+- 
+- Makefile has necessary commands
 
 #### Pre-requisite :
-- go1.17 or above installed
+- go1.16 or above installed
   - docker
   - make command
 1. Install essential go modules
