@@ -33,7 +33,7 @@ func (q *Queries) CreateTransferEntry(ctx context.Context, arg CreateTransferEnt
 	)
 	var i AccountTransactionsEntry
 	err := row.Scan(
-		&i.ID,
+		&i.Uid,
 		&i.TransactionID,
 		&i.AccountID,
 		&i.OtherAccount,
