@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/google/uuid"
 	"github.com/prakharporwal/bank-server/services/klog"
 	"net/mail"
 	"time"
@@ -22,4 +23,9 @@ func GenerateTimeStampMicro() int64 {
 
 func GenerateTimeStampMilli() int64 {
 	return time.Now().UnixMilli()
+}
+
+func GenerateUUID() uuid.UUID {
+	uid, _ := uuid.NewRandom()
+	return uid
 }

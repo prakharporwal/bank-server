@@ -4,25 +4,26 @@ import (
 	"log"
 )
 
-type KLogger interface {
-	Info()
-	Warn()
-	Error()
-	Debug()
+func init() {
+	log.SetFlags(log.Ltime)
 }
 
-func Info(message string, args interface{}) {
-	log.Println("INFO :", message, args)
+func Info(args ...interface{}) {
+	log.SetPrefix("INFO: ")
+	log.Println(args...)
 }
 
-func Warn(message string, args ...interface{}) {
-	log.Println("WARNING : ", message, args)
+func Warn(args ...interface{}) {
+	log.SetPrefix("WARNING: ")
+	log.Println(args...)
 }
 
-func Error(message string, args ...interface{}) {
-	log.Println("ERROR : ", message, args)
+func Error(args ...interface{}) {
+	log.SetPrefix("ERROR: ")
+	log.Println(args...)
 }
 
-func Debug(message string, args ...interface{}) {
-	log.Println("DEBUG : ", message, args)
+func Debug(args ...interface{}) {
+	log.SetPrefix("DEBUG: ")
+	log.Println(args...)
 }

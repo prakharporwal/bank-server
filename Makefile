@@ -9,13 +9,13 @@ build:
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/lambda main.go
 
 migration:
-	migrate create -ext sql -dir db/migrations -seq init_schema 
+	migrate create -ext sql -dir models/migrations -seq init_schema
 
 dropdb:
 	docker exec -it postgres14 dropdb --username=admin bank_server
 
 migrateup: 
-	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" up
+	migrate -path models/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" up
 
 migratedown:
 	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" down
@@ -34,3 +34,10 @@ sqlc:
 
 test:
 	go test -v -cover ./...
+
+backupdb:
+	docker exec (container_name) pg_dump -U (db_user) (db_schema) > backup.sql
+
+mockgen:
+	# go install github.com/golang/mock/mockgen@v1.6.0
+	mockgen -source models/store/store.go -package store -destination=models/store/mock_store.go

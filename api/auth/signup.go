@@ -3,7 +3,8 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/apierror"
-	db "github.com/prakharporwal/bank-server/db/sqlc"
+	"github.com/prakharporwal/bank-server/models/sqlc"
+	"github.com/prakharporwal/bank-server/models/store"
 	"github.com/prakharporwal/bank-server/services/klog"
 	"github.com/prakharporwal/bank-server/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -21,7 +22,7 @@ type signUpRequest struct {
 	Password  string `json:"password" binding:"required"`
 }
 
-func (controller *AuthController) SignUp(ctx *gin.Context) {
+func SignUp(ctx *gin.Context) {
 	var request signUpRequest
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
@@ -48,7 +49,7 @@ func (controller *AuthController) SignUp(ctx *gin.Context) {
 		PasswordHash: string(passwordHash),
 	}
 
-	user, err := controller.DB.CreateUser(ctx, args)
+	user, err := store.GetInstance().CreateUser(ctx, args)
 	if err != nil {
 		klog.Error("db query for user creation failed", err)
 		ctx.JSON(http.StatusInternalServerError, apierror.UnexpectedError)

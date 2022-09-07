@@ -4,13 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/prakharporwal/bank-server/api"
-	"github.com/prakharporwal/bank-server/db"
+	"github.com/prakharporwal/bank-server/models/store"
 	"github.com/prakharporwal/bank-server/services/klog"
 )
 
 const (
 	serverAdd = "0.0.0.0:8080"
-	dbDriver  = "postgres"
 )
 
 func init() {
@@ -27,8 +26,7 @@ const RedisAddr = "13.233.195.130:6379"
 func handler() {
 	klog.Info("Hey I am creating a Bank Payment System! Will be fun to work on !", "hhh")
 	//defer conn.Close()
-
-	store := db.GetInstance()
+	store := store.GetInstance()
 
 	//store := db.GetInstance()
 	server := api.NewServer(store)
