@@ -11,27 +11,29 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { utils } from "../utils/cookie";
+import { error } from "console";
 
-type ITrans = {
-  uid?: string;
+type IStatement = {
+  account_id: number;
   amount: number;
-  created_at: string;
-  from_account_id: number;
-  to_account_id: number;
+  other_account: number;
+  other_account_owner: string;
+  timestamp: string;
+  transaction_id: number;
+  type: string;
 };
 
-const TransactionTable: React.FunctionComponent<any> = () => {
-  const [data, setData] = useState<ITrans[]>([]);
+const StatementTable: React.FunctionComponent<any> = () => {
+  const [data, setData] = useState<IStatement[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/v1/transaction/list/1", {
+    fetch("http://localhost:8080/v1/account/3/statement/1", {
       method: "GET",
       headers: new Headers({
         access_token: utils.getCookie("access_token"),
       }),
     })
       .then((response) => {
-        console.log("res", response);
         if (!response.ok) {
           throw new Error("Something went wrong " + response.statusText);
         }
@@ -50,24 +52,28 @@ const TransactionTable: React.FunctionComponent<any> = () => {
     <>
       <TableContainer>
         <Table variant="simple">
-          <TableCaption>Transaction Tables</TableCaption>
+          <TableCaption>Account Statement</TableCaption>
           <Thead>
             <Tr>
-              <Th>ID</Th>
-              <Th>From Account Id</Th>
-              <Th>To Account Id</Th>
+              <Th>Transaction ID</Th>
+              <Th>From Account </Th>
+              <Th>Type</Th>
               <Th>Amount</Th>
+              <Th>Timestamp</Th>
             </Tr>
           </Thead>
           <Tbody>
             {data.length !== 0 &&
               data.map((item) => {
                 return (
-                  <Tr key={item.uid}>
-                    <Td>{item.uid?.split("-")[0]}</Td>
-                    <Td>{item.from_account_id}</Td>
-                    <Td>{item.to_account_id}</Td>
+                  <Tr key={item.transaction_id}>
+                    <Td isNumeric>{item.transaction_id}</Td>
+                    <Td>
+                      {item.other_account + "\n" + item.other_account_owner}
+                    </Td>
+                    <Td>{item.type}</Td>
                     <Td isNumeric>{item.amount}</Td>
+                    <Td>{item.timestamp}</Td>
                   </Tr>
                 );
               })}
@@ -78,4 +84,4 @@ const TransactionTable: React.FunctionComponent<any> = () => {
   );
 };
 
-export default TransactionTable;
+export default StatementTable;
