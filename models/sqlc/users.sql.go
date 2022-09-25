@@ -10,41 +10,32 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users ( user_id, username, user_email, password_hash, is_verified)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING user_id, username, user_email, is_verified
+INSERT INTO users (user_email, username, password_hash, is_verified)
+VALUES ( $1, $2, $3, $4)
+RETURNING user_email, username
 `
 
 type CreateUserParams struct {
-	UserID       int64  `json:"user_id"`
-	Username     string `json:"username"`
 	UserEmail    string `json:"user_email"`
+	Username     string `json:"username"`
 	PasswordHash string `json:"password_hash"`
 	IsVerified   bool   `json:"is_verified"`
 }
 
 type CreateUserRow struct {
-	UserID     int64  `json:"user_id"`
-	Username   string `json:"username"`
-	UserEmail  string `json:"user_email"`
-	IsVerified bool   `json:"is_verified"`
+	UserEmail string `json:"user_email"`
+	Username  string `json:"username"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
-		arg.UserID,
-		arg.Username,
 		arg.UserEmail,
+		arg.Username,
 		arg.PasswordHash,
 		arg.IsVerified,
 	)
 	var i CreateUserRow
-	err := row.Scan(
-		&i.UserID,
-		&i.Username,
-		&i.UserEmail,
-		&i.IsVerified,
-	)
+	err := row.Scan(&i.UserEmail, &i.Username)
 	return i, err
 }
 

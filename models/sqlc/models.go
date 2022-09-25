@@ -31,6 +31,17 @@ type AccountTransactionsEntry struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type Session struct {
+	SessionID    uuid.UUID `json:"session_id"`
+	Email        string    `json:"email"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	RefreshToken string    `json:"refresh_token"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	IsBlocked    bool      `json:"is_blocked"`
+	CreatedAt    time.Time `json:"created_at"`
+}
+
 type Transaction struct {
 	Uid           uuid.UUID `json:"uid"`
 	TransactionID int64     `json:"transaction_id"`

@@ -11,8 +11,11 @@ import (
 )
 
 type Querier interface {
+	BlockSessionById(ctx context.Context, sessionID uuid.UUID) (Session, error)
+	BlockSessionFamily(ctx context.Context, email string) (Session, error)
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error)
 	CreateAccountStatementEntry(ctx context.Context, arg CreateAccountStatementEntryParams) (AccountTransactionsEntry, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTransferRecord(ctx context.Context, arg CreateTransferRecordParams) (Transaction, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	DeleteAccount(ctx context.Context, id int64) error
@@ -20,6 +23,7 @@ type Querier interface {
 	GetAccountByOwnerEmail(ctx context.Context, ownerEmail string) (Account, error)
 	GetBalanceByAccountId(ctx context.Context, id int64) (int64, error)
 	GetBalanceByOwnerEmail(ctx context.Context, ownerEmail string) (int64, error)
+	GetSession(ctx context.Context, sessionID uuid.UUID) (Session, error)
 	GetTransaction(ctx context.Context, uid uuid.UUID) (Transaction, error)
 	GetTransactionsList(ctx context.Context) ([]Transaction, error)
 	GetUserDetails(ctx context.Context, userEmail string) (GetUserDetailsRow, error)
