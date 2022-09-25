@@ -17,6 +17,10 @@ func IsValidEmail(email string) bool {
 	return true
 }
 
+func GenerateTimeStampNano() int64 {
+	return time.Now().UnixNano()
+}
+
 func GenerateTimeStampMicro() int64 {
 	return time.Now().UnixMicro()
 }

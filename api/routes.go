@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/account"
 	"github.com/prakharporwal/bank-server/api/auth"
@@ -13,22 +14,27 @@ func InitRoutes(router *gin.Engine) {
 		context.JSON(200, "Hello There")
 	})
 
-	router.GET("/health", HealthCheck)
-	router.Use(middleware.CORSMiddleware())
+	public := router.Group("/public")
+	public.Use(cors.Default()) // as this is public we don't need access_token header
 
-	protected := router.Use(middleware.AuthMiddleware())
+	public.GET("/health", HealthCheck)
+
+	public.POST("/v1/login", auth.Login)
+	public.POST("/v1/signup", auth.SignUp)
+
+	router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.AuthMiddleware())
 
 	router.GET("/account", account.GetAccount)
 	router.GET("/v1/transaction/list/:page_num", account.ListTransactions)
 	router.GET("/account/list/:page", account.ListAccount)
-	router.POST("/v1/login", auth.Login)
 
-	protected.GET("/:account_id/statement/:page", account.GetAccountStatement)
-	protected.POST("/account", account.CreateAccount)
+	router.GET("/v1/account/:account_id/statement/:page", account.GetAccountStatement)
+	router.POST("/account", account.CreateAccount)
+	router.POST("/v1/session/refresh", auth.RefreshSession)
 	//router.GET("/:account_id/statement/:page", account.Get)
 	//router.POST("/login", auth.Login)
-
-	protected.POST("/deposit", account.Deposit)
-	protected.POST("/transfer", account.TransferTx)
+	router.POST("/deposit", account.Deposit)
+	router.POST("/transfer", account.TransferTx)
 
 }

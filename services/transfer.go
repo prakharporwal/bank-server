@@ -41,7 +41,9 @@ func TransferService(ctx context.Context, transaction models.CreateTransferRecor
 		result.FromEntry, err = q.CreateAccountStatementEntry(ctx, models.CreateAccountStatementEntryParams{
 			TransactionID: transaction.TransactionID,
 			AccountID:     transaction.FromAccountID,
+			OtherAccount:  transaction.ToAccountID,
 			Amount:        -transaction.Amount,
+			Currency:      transaction.Currency,
 			Type:          "DEBIT",
 		})
 		if err != nil {
@@ -51,7 +53,9 @@ func TransferService(ctx context.Context, transaction models.CreateTransferRecor
 		result.ToEntry, err = q.CreateAccountStatementEntry(ctx, models.CreateAccountStatementEntryParams{
 			TransactionID: transaction.TransactionID,
 			AccountID:     transaction.ToAccountID,
+			OtherAccount:  transaction.FromAccountID,
 			Amount:        transaction.Amount,
+			Currency:      transaction.Currency,
 			Type:          "CREDIT",
 		})
 		if err != nil {

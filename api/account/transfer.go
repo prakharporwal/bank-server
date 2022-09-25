@@ -199,7 +199,8 @@ func TransferTx(ctx *gin.Context) {
 	}
 	account, _ := store.GetInstance().GetAccountById(ctx, transaction.FromAccountId)
 
-	if account.Balance <= 0 {
+	// if transaction amount bigger than balance reject!
+	if account.Balance < transaction.Amount {
 		klog.Error("Balance Low for user!", transaction.FromAccountId)
 		ctx.JSON(http.StatusBadRequest, gin.H{MESSAGE: "Balance Low!"})
 		return

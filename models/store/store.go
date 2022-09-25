@@ -47,8 +47,6 @@ func GetInstance() *SQLStore {
 		} else {
 			klog.Info("Single instance already created.")
 		}
-	} else {
-		klog.Info("Single instance already created.")
 	}
 
 	return sqlInstance

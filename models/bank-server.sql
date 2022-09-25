@@ -29,9 +29,8 @@ CREATE TABLE "account_transactions_entries" (
 );
 
 CREATE TABLE "users"(
-    user_id BIGSERIAL PRIMARY KEY ,
-    username varchar NOT NULL ,
-    user_email varchar UNIQUE NOT NULL ,
+    user_email varchar PRIMARY KEY NOT NULL ,
+    username varchar UNIQUE NOT NULL ,
     password_hash varchar NOT NULL ,
     is_verified boolean NOT NULL DEFAULT false,
     created_at timestamptz NOT NULL DEFAULT now(),
@@ -62,7 +61,22 @@ ALTER TABLE "transactions" ADD FOREIGN KEY ("to_account_id") REFERENCES "account
 
 ALTER TABLE "account_transactions_entries" ADD FOREIGN KEY ("account_id") REFERENCES "accounts" ("id");
 
--- ALTER TABLE "users"  FOREIGN KEY ("user_email") REFERENCES "accounts" ("owner_email");
+ALTER TABLE "users" ADD FOREIGN KEY ("user_email") REFERENCES "accounts" ("owner_email");
+
+
+-- sessions table
+CREATE TABLE sessions(
+    session_id uuid NOT NULL PRIMARY KEY ,
+    email varchar NOT NULL ,
+    user_agent varchar NOT NULL,
+    client_ip varchar NOT NULL,
+    refresh_token varchar NOT NULL ,
+    expires_at timestamptz NOT NULL ,
+    is_blocked bool NOT NULL default false,
+    created_at timestamptz NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE "sessions"  FOREIGN KEY ("email") REFERENCES "accounts" ("owner_email");
 
 
 -- updated at timestamp function

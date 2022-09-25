@@ -26,6 +26,9 @@ func GetAccountStatement(ctx *gin.Context) {
 	accountId, _ := strconv.Atoi(ctx.Param("account_id"))
 	pageNum, _ := strconv.Atoi(ctx.Param("page"))
 
+	klog.Debug("acountID pagenum", accountId, pageNum)
+	//user := auth.GetCurrentUser()
+
 	statementQuery := `SELECT T.transaction_id, T.account_id, T.other_account, A.owner_email, T.amount, T.type, T.created_at ` +
 		`FROM account_transactions_entries as T LEFT JOIN accounts as A ` +
 		`ON T.other_account=A.id WHERE T.account_id=($1) ` +
@@ -37,13 +40,15 @@ func GetAccountStatement(ctx *gin.Context) {
 
 	for rows.Next() {
 		var response responseBody
-		err := rows.Scan(&response.TransactionId, &response.AccountId, &response.AccountId, &response.OtherAccountOwner, &response.Amount, &response.Type, &response.Timestamp)
+		err := rows.Scan(&response.TransactionId, &response.AccountId, &response.OtherAccount, &response.OtherAccountOwner, &response.Amount, &response.Type, &response.Timestamp)
 		if err != nil {
 			klog.Error("failed! scanning transaction : Account Id = ", accountId, err)
 			continue
 		}
 		responseList = append(responseList, response)
 	}
+
+	//if user == responseList
 
 	ctx.JSON(http.StatusOK, responseList)
 }

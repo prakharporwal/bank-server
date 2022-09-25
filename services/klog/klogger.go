@@ -24,6 +24,7 @@ func Error(args ...interface{}) {
 }
 
 func Debug(args ...interface{}) {
+
 	log.SetPrefix("DEBUG: ")
 	log.Println(args...)
 }
