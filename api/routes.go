@@ -1,6 +1,9 @@
 package api
 
 import (
+	"log"
+	"net"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/prakharporwal/bank-server/api/account"
@@ -10,8 +13,17 @@ import (
 )
 
 func InitRoutes(router *gin.Engine) {
-	router.GET("/hello", func(context *gin.Context) {
-		context.JSON(200, "Hello There")
+	router.GET("/", func(context *gin.Context) {
+		// Get preferred outbound ip of this machine
+		conn, err := net.Dial("udp", "8.8.8.8:80")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer conn.Close()
+
+		localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+		context.JSON(200, gin.H{"msg": "Hello There", "ip": localAddr.IP})
 	})
 
 	public := router.Group("/public")
@@ -26,7 +38,7 @@ func InitRoutes(router *gin.Engine) {
 	router.Use(middleware.AuthMiddleware())
 
 	router.GET("/account", account.GetAccount)
-	router.GET("/v1/transaction/list/:page_num", account.ListTransactions)
+	public.GET("/v1/transaction/list/:page_num", account.ListTransactions)
 	router.GET("/account/list/:page", account.ListAccount)
 
 	router.GET("/v1/account/:account_id/statement/:page", account.GetAccountStatement)

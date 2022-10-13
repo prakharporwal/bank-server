@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: yogveda-cert #name of this object
+  namespace: default #same namespace as
+spec:
+  dnsNames:
+    - mytest.yogveda.live
+    - yogveda.live
+  secretName: yogveda-tls-cert
+  issuerRef:
+    name: letsencrypt-cluster-issuer
+    kind: ClusterIssuer

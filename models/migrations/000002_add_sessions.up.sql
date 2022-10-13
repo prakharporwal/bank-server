@@ -1,3 +1,4 @@
+
 CREATE TABLE sessions(
     session_id uuid NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
     email varchar NOT NULL ,

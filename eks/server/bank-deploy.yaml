@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank
+  namespace: server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: bank
+  template:
+    metadata:
+      labels:
+        run: bank
+    spec:
+      containers:
+        - name: bank
+          image: grofffer/bank:1.5
+          ports:
+            - containerPort: 8080

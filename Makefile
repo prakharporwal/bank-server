@@ -18,7 +18,7 @@ migrateup:
 	migrate -path models/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" up
 
 migratedown:
-	migrate -path db/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" down
+	migrate -path models/migrations -database "postgres://admin:password@localhost:5432/bank_server?sslmode=disable" down
 
 dockerimage:
 	# If facing an-error-failed-to-solve-with-frontend-dockerfile-v0

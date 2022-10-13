@@ -7,6 +7,8 @@ CREATE TABLE "accounts" (
     "updated_at" timestamptz NOT NULL DEFAULT NOW()
 );
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE "transactions" (
     "uid" uuid NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
     "transaction_id" BIGINT unique NOT NULL ,
@@ -76,7 +78,7 @@ CREATE TABLE sessions(
     created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE "sessions"  FOREIGN KEY ("email") REFERENCES "accounts" ("owner_email");
+ALTER TABLE "sessions" ADD FOREIGN KEY ("email") REFERENCES "accounts" ("owner_email");
 
 
 -- updated at timestamp function
